@@ -30,7 +30,7 @@ class HomePage(NewsPage):
     @property
     def article_links(self):
         link_list = []
-        for number in range(31, 32):
+        for number in range(30, 32):
             query = self._queries['article_links'].format(number)
             for link in self._query(query):
                 if link and link.has_attr('href'):
