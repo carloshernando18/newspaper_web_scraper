@@ -28,7 +28,8 @@ def main():
             row['newspaper_uid'],
             row['n_token_body'],
             row['n_token_title'],
-            row['url']
+            row['url'],
+            row['sentiment']
         )
         postgress_session.add(article)
 

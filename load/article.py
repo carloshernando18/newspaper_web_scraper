@@ -22,6 +22,8 @@ class Article(Base):
 
     url = Column(String, unique=True)
 
+    sentiment = Column(String)
+
     def __init__(self,
                  id,
                  body,
@@ -30,7 +32,8 @@ class Article(Base):
                  newspaper_uid,
                  n_tokens_body,
                  n_tokens_title,
-                 url):
+                 url,
+                 sentiment):
         self.id = id
         self.body = body
         self.host = host
@@ -39,3 +42,4 @@ class Article(Base):
         self.n_tokens_body = n_tokens_body
         self.n_tokens_title = n_tokens_title
         self.url = url
+        self.sentiment = sentiment

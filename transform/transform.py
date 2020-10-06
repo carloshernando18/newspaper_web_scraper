@@ -4,6 +4,7 @@ from urllib.parse import urlparse
 
 import nltk
 import pandas as pd
+import requests
 from nltk.corpus import stopwords
 
 
@@ -26,6 +27,7 @@ def main():
     dataFrame['n_token_body'] = _tokenize_column(dataFrame, 'body')
     dataFrame = _remove_duplicate(dataFrame, 'title')
     dataFrame = _remove_row_with_misssing_values(dataFrame)
+    dataFrame = _get_sentiments_using_watson(dataFrame)
     _sava_file(dataFrame, filename)
 
 
@@ -36,6 +38,28 @@ def _sava_file(dataFrame, filename):
 
 def _remove_row_with_misssing_values(dataFrame):
     return dataFrame.dropna()
+
+
+def _get_sentiments_using_watson(dataFrame):
+    url = 'https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/08063317-8809-49a3-968f-84cfefab1116/v1/analyze?version=2018-11-16'
+    token = 'YXBpa2V5OmtGdlN6Q0FUX2JZMnJ3V181VzR1WGZYNWdMQ1JyQ190aTRVR1ppWExqb1hG'
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic {0}'.format(token)
+    }
+    for index, row in dataFrame.iterrows():
+        text = row['body'].replace('“', '')
+        text = text.replace('”', '')
+        payload = "{" + ' "text": "' + \
+            text + '", "features" : ' + \
+            "{" + '"sentiment": ' + " { }  } }"
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+        value = response.json()
+        dataFrame.loc[index,
+                      'sentiment'] = value['sentiment']['document']['label']
+
+    return dataFrame
 
 
 def _remove_duplicate(dataFrame, column):
